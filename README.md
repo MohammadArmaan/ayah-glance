@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# AyahGlance
 
-## Getting Started
+🌙 **AyahGlance** is your AI-powered companion to understand and reflect on the verses of the Holy Quran. Whether you wish to explore Quranic wisdom through typing or voice, AyahGlance offers thoughtful, voice-assisted responses to guide your spiritual journey.
 
-First, run the development server:
+🟢 Live at: [https://ayahglance.vercel.app](https://ayahglance.vercel.app)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Features
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- 🔊 **Voice Input & Output**: Ask questions by speaking and hear AI-powered responses using natural voice synthesis.
+- 🧠 **AI Responses**: Powered by **Gemini** through **Langchain**, delivering intelligent summaries and contextual answers.
+- 📚 **Quran-Centric**: Designed to explain Quranic verses clearly and meaningfully.
+- 🧵 **Persistent Chat History**: Previous conversations are stored securely using **Supabase**.
+- 💡 **Minimal UI**: Built with **Next.js**, **Tailwind CSS**, and **Shadcn UI** for a smooth and responsive experience.
+- 🧠 **Contextual Memory**: Vector search powered by **Supabase Vector** to retrieve relevant ayahs for your queries.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## ⚙️ Technologies Used
 
-To learn more about Next.js, take a look at the following resources:
+- **Next.js** – The React framework for production
+- **Tailwind CSS** – Utility-first CSS framework
+- **Shadcn UI** – Beautiful and accessible UI components
+- **Langchain** – Chain-based architecture to communicate with LLMs
+- **Gemini API** – Language model to power intelligent Quranic insights
+- **Supabase** – Backend services (database, auth, storage)
+- **Supabase Vector** – Vector search for semantic ayah matching
+- **Clerk** – Seamless user authentication and session management
+- **Web Speech API** – Speech recognition and text-to-speech for real-time interaction
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📷 Screenshots
 
-## Deploy on Vercel
+> _(Add relevant screenshots or screen recordings of the chat interface, speech input, and responses here.)_
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 👨‍💻 Author
+
+Developed with ❤️ by [Mohammad Armaan](https://mohammadarmaan.co.in)
+
+Feel free to reach out for feedback, contributions, or collaborations.
+
+---
+
+## 🕋 Disclaimer
+
+AyahGlance is an AI-assisted application aimed at helping users engage with the Quran. It is not a substitute for scholarly interpretation. Always consult trusted scholars for religious guidance.
+
+---
