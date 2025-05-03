@@ -2,7 +2,7 @@
 
 🌙 **AyahGlance** is your AI-powered companion to understand and reflect on the verses of the Holy Quran. Whether you wish to explore Quranic wisdom through typing or voice, AyahGlance offers thoughtful, voice-assisted responses to guide your spiritual journey.
 
-🟢 Live at: [https://ayahglance.vercel.app](https://ayahglance.vercel.app)
+🟢 Live at: [Ayah Glance](https://ayah-glance.vercel.app)
 
 ---
 

@@ -153,59 +153,59 @@ export default function Home() {
                                         }}
                                     />
                                     <button
-                                        onClick={() => {
+                                        onClick={async () => {
                                             // Stop current speech
                                             if (speakingIndex === index) {
-                                                window.speechSynthesis.cancel();
-                                                setSpeakingIndex(null);
-                                                return;
+                                              window.speechSynthesis.cancel();
+                                              setSpeakingIndex(null);
+                                              return;
                                             }
-
-                                            const plainText =
-                                                extractTextFromHTML(msg.text);
+                                          
+                                            const plainText = extractTextFromHTML(msg.text);
                                             window.speechSynthesis.cancel();
                                             setSpeakingIndex(index);
-
-                                            const utterance =
-                                                new SpeechSynthesisUtterance(
-                                                    plainText
-                                                );
-
-                                            const voices =
-                                                window.speechSynthesis.getVoices();
-
-                                            // Select a neutral voice (adjust this depending on browser/platform)
+                                          
+                                            const utterance = new SpeechSynthesisUtterance(plainText);
+                                            utterance.rate = 1.5;
+                                            utterance.pitch = 1;
+                                          
+                                            const getVoices = () =>
+                                              new Promise((resolve) => {
+                                                let voices = window.speechSynthesis.getVoices();
+                                                if (voices.length) return resolve(voices);
+                                                window.speechSynthesis.onvoiceschanged = () => {
+                                                  voices = window.speechSynthesis.getVoices();
+                                                  resolve(voices);
+                                                };
+                                              });
+                                          
+                                            const voices = await getVoices();
+                                          
+                                            const preferredVoices = [
+                                              "Zarqa", // Google's Arabic-neutral voice
+                                              "Google العربية",
+                                              "Microsoft Hoda - Arabic (Egypt)",
+                                              "Tajweed Arabic Male",
+                                              "Tajweed Arabic Female"
+                                            ];
+                                          
                                             const neutralVoice =
-                                                voices.find((v) =>
-                                                    v.name.includes("Zarqa")
-                                                ) || // Google's Arabic-neutral voice
-                                                voices.find(
-                                                    (v) => v.lang === "ar-SA"
-                                                ) ||
-                                                voices.find((v) =>
-                                                    v.lang.startsWith("ar")
-                                                ) ||
-                                                voices[0]; // fallback
-
+                                              voices.find((v) =>
+                                                preferredVoices.some((name) => v.name.includes(name))
+                                              ) ||
+                                              voices.find((v) => v.lang === "ar-SA") ||
+                                              voices.find((v) => v.lang.startsWith("ar")) ||
+                                              voices[0]; // fallback
+                                          
                                             utterance.voice = neutralVoice;
                                             utterance.lang = neutralVoice.lang;
-                                            utterance.rate = 1.5; // Normal speed
-                                            utterance.pitch = 1;
-
-                                            utterance.onend = () =>
-                                                setSpeakingIndex(null);
-
-                                            // Debug
-                                            console.log(
-                                                "Selected neutral voice:",
-                                                utterance.voice?.name,
-                                                utterance.voice?.lang
-                                            );
-
-                                            window.speechSynthesis.speak(
-                                                utterance
-                                            );
-                                        }}
+                                          
+                                            utterance.onend = () => setSpeakingIndex(null);
+                                          
+                                            console.log("Selected voice:", neutralVoice?.name, neutralVoice?.lang);
+                                          
+                                            window.speechSynthesis.speak(utterance);
+                                          }}
                                         className="mt-2 flex items-center gap-1 text-gray-500 hover:text-blue-500"
                                         title="Speak response"
                                     >
