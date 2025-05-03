@@ -233,7 +233,7 @@ export default function Home() {
                 {/* Input stays fixed at bottom */}
                 <form
                     onSubmit={handleChat}
-                    className="md:p-10 p-5 flex flex-col md:flex-row items-start md:items-center justify-center  w-[300px] md:w-[500px] border-1 bg-white dark:bg-black z-50 fixed bottom-5 right-[50%] left-[50%] translate-[-50%] rounded-md h-auto md:h-[80px] shadow-lg gap-2"
+                    className="md:p-10 p-5 flex flex-col md:flex-row items-start md:items-center justify-center  w-[300px] md:w-[500px] border-1 bg-white dark:bg-black z-50 fixed -bottom-10 md:bottom-5 right-[50%] left-[50%] translate-[-50%] rounded-md h-auto md:h-[80px] shadow-lg gap-2"
                 >
                     <Input
                         value={prompt}
