@@ -153,7 +153,7 @@ export default function Home() {
                                         }}
                                     />
                                     <button
-                                        onClick={async () => {
+                                        onClick={() => {
                                             if (speakingIndex === index) {
                                               window.speechSynthesis.cancel();
                                               setSpeakingIndex(null);
@@ -165,40 +165,37 @@ export default function Home() {
                                             setSpeakingIndex(index);
                                           
                                             const utterance = new SpeechSynthesisUtterance(plainText);
-                                            utterance.rate = 1.5;
+                                            utterance.rate = 1.2;
                                             utterance.pitch = 1;
                                           
-                                            // Wait for voices to load (especially important on mobile)
-                                            const getVoices = () =>
-                                              new Promise((resolve) => {
-                                                const voices = window.speechSynthesis.getVoices();
-                                                if (voices.length) return resolve(voices);
-                                                window.speechSynthesis.onvoiceschanged = () => {
-                                                  resolve(window.speechSynthesis.getVoices());
-                                                };
-                                              });
+                                            let voices = window.speechSynthesis.getVoices();
                                           
-                                            const voices = await getVoices();
+                                            // Fallback: if voices aren't available yet (on mobile), delay and retry
+                                            if (!voices.length) {
+                                              setTimeout(() => {
+                                                voices = window.speechSynthesis.getVoices();
+                                                setVoiceAndSpeak(voices);
+                                              }, 500);
+                                            } else {
+                                              setVoiceAndSpeak(voices);
+                                            }
                                           
-                                            const arabicVoice =
-                                              voices.find((v) => v.lang === "ar-SA") ||
-                                              voices.find((v) => v.lang.startsWith("ar"));
+                                            function setVoiceAndSpeak(voices) {
+                                              const preferredVoice =
+                                                voices.find((v) => v.lang.startsWith("ar")) ||
+                                                voices.find((v) => v.lang === "en-IN") ||
+                                                voices.find((v) => v.lang === "en-US") ||
+                                                voices[0];
                                           
-                                            const fallbackEnglishVoice =
-                                              voices.find((v) => v.lang === "en-IN") ||
-                                              voices.find((v) => v.lang === "en-US");
+                                              utterance.voice = preferredVoice;
+                                              utterance.lang = preferredVoice?.lang || "en-US";
                                           
-                                            const selectedVoice = arabicVoice || fallbackEnglishVoice || voices[0];
+                                              utterance.onend = () => setSpeakingIndex(null);
                                           
-                                            utterance.voice = selectedVoice;
-                                            utterance.lang = selectedVoice.lang;
-                                          
-                                            utterance.onend = () => setSpeakingIndex(null);
-                                          
-                                            console.log("Using voice:", selectedVoice.name, selectedVoice.lang);
-                                            window.speechSynthesis.speak(utterance);
+                                              console.log("Speaking with:", preferredVoice?.name, preferredVoice?.lang);
+                                              window.speechSynthesis.speak(utterance);
+                                            }
                                           }}
-                                          
                                         className="mt-2 flex items-center gap-1 text-blue-500 hover:text-blue-600"
                                         title="Speak response"
                                     >
@@ -207,7 +204,6 @@ export default function Home() {
                                         ) : (
                                             <Volume2 size={18} />
                                         )}
-                                        {/* <span className="text-xs">Speak</span> */}
                                     </button>
                                 </div>
                             ) : (
