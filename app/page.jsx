@@ -154,7 +154,6 @@ export default function Home() {
                                     />
                                     <button
                                         onClick={async () => {
-                                            // Stop current speech
                                             if (speakingIndex === index) {
                                               window.speechSynthesis.cancel();
                                               setSpeakingIndex(null);
@@ -169,44 +168,38 @@ export default function Home() {
                                             utterance.rate = 1.5;
                                             utterance.pitch = 1;
                                           
+                                            // Wait for voices to load (especially important on mobile)
                                             const getVoices = () =>
                                               new Promise((resolve) => {
-                                                let voices = window.speechSynthesis.getVoices();
+                                                const voices = window.speechSynthesis.getVoices();
                                                 if (voices.length) return resolve(voices);
                                                 window.speechSynthesis.onvoiceschanged = () => {
-                                                  voices = window.speechSynthesis.getVoices();
-                                                  resolve(voices);
+                                                  resolve(window.speechSynthesis.getVoices());
                                                 };
                                               });
                                           
                                             const voices = await getVoices();
                                           
-                                            const preferredVoices = [
-                                              "Zarqa", // Google's Arabic-neutral voice
-                                              "Google العربية",
-                                              "Microsoft Hoda - Arabic (Egypt)",
-                                              "Tajweed Arabic Male",
-                                              "Tajweed Arabic Female"
-                                            ];
-                                          
-                                            const neutralVoice =
-                                              voices.find((v) =>
-                                                preferredVoices.some((name) => v.name.includes(name))
-                                              ) ||
+                                            const arabicVoice =
                                               voices.find((v) => v.lang === "ar-SA") ||
-                                              voices.find((v) => v.lang.startsWith("ar")) ||
-                                              voices[0]; // fallback
+                                              voices.find((v) => v.lang.startsWith("ar"));
                                           
-                                            utterance.voice = neutralVoice;
-                                            utterance.lang = neutralVoice.lang;
+                                            const fallbackEnglishVoice =
+                                              voices.find((v) => v.lang === "en-IN") ||
+                                              voices.find((v) => v.lang === "en-US");
+                                          
+                                            const selectedVoice = arabicVoice || fallbackEnglishVoice || voices[0];
+                                          
+                                            utterance.voice = selectedVoice;
+                                            utterance.lang = selectedVoice.lang;
                                           
                                             utterance.onend = () => setSpeakingIndex(null);
                                           
-                                            console.log("Selected voice:", neutralVoice?.name, neutralVoice?.lang);
-                                          
+                                            console.log("Using voice:", selectedVoice.name, selectedVoice.lang);
                                             window.speechSynthesis.speak(utterance);
                                           }}
-                                        className="mt-2 flex items-center gap-1 text-gray-500 hover:text-blue-500"
+                                          
+                                        className="mt-2 flex items-center gap-1 text-blue-500 hover:text-blue-600"
                                         title="Speak response"
                                     >
                                         {speakingIndex === index ? (
@@ -214,7 +207,7 @@ export default function Home() {
                                         ) : (
                                             <Volume2 size={18} />
                                         )}
-                                        <span className="text-xs">Speak</span>
+                                        {/* <span className="text-xs">Speak</span> */}
                                     </button>
                                 </div>
                             ) : (
