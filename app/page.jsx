@@ -118,7 +118,7 @@ export default function Home() {
                 {/* Scrollable chat area */}
                 <div className="w-[500px] lg:w-[1000px] overflow-y-auto px-4 py-2">
                     <div className="flex flex-col gap-4 mb-40">
-                        {isChatLoading  && (
+                        {isChatLoading && (
                             <div className="min-h-[200px] flex items-center justify-center">
                                 <div className="w-10 h-10 border-4 border-t-transparent border-primary rounded-full animate-spin" />
                             </div>
@@ -155,47 +155,87 @@ export default function Home() {
                                     <button
                                         onClick={() => {
                                             if (speakingIndex === index) {
-                                              window.speechSynthesis.cancel();
-                                              setSpeakingIndex(null);
-                                              return;
+                                                window.speechSynthesis.cancel();
+                                                setSpeakingIndex(null);
+                                                return;
                                             }
-                                          
-                                            const plainText = extractTextFromHTML(msg.text);
+
+                                            const plainText =
+                                                extractTextFromHTML(msg.text);
                                             window.speechSynthesis.cancel();
                                             setSpeakingIndex(index);
-                                          
-                                            const utterance = new SpeechSynthesisUtterance(plainText);
+
+                                            const utterance =
+                                                new SpeechSynthesisUtterance(
+                                                    plainText
+                                                );
                                             utterance.rate = 1.2;
                                             utterance.pitch = 1;
-                                          
-                                            let voices = window.speechSynthesis.getVoices();
-                                          
-                                            // Fallback: if voices aren't available yet (on mobile), delay and retry
-                                            if (!voices.length) {
-                                              setTimeout(() => {
-                                                voices = window.speechSynthesis.getVoices();
-                                                setVoiceAndSpeak(voices);
-                                              }, 500);
-                                            } else {
-                                              setVoiceAndSpeak(voices);
-                                            }
-                                          
+
+                                            utterance.onend = () =>
+                                                setSpeakingIndex(null);
+
                                             function setVoiceAndSpeak(voices) {
-                                              const preferredVoice =
-                                                voices.find((v) => v.lang.startsWith("ar")) ||
-                                                voices.find((v) => v.lang === "en-IN") ||
-                                                voices.find((v) => v.lang === "en-US") ||
-                                                voices[0];
-                                          
-                                              utterance.voice = preferredVoice;
-                                              utterance.lang = preferredVoice?.lang || "en-US";
-                                          
-                                              utterance.onend = () => setSpeakingIndex(null);
-                                          
-                                              console.log("Speaking with:", preferredVoice?.name, preferredVoice?.lang);
-                                              window.speechSynthesis.speak(utterance);
+                                                // Fallback voice preferences
+                                                const preferredVoice =
+                                                    voices.find((v) =>
+                                                        v.lang.startsWith("ar")
+                                                    ) ||
+                                                    voices.find(
+                                                        (v) =>
+                                                            v.lang === "en-IN"
+                                                    ) ||
+                                                    voices.find(
+                                                        (v) =>
+                                                            v.lang === "en-US"
+                                                    );
+
+                                                // Use preferred voice or system default
+                                                const finalVoice =
+                                                    preferredVoice ||
+                                                    voices.find(
+                                                        (v) => v.default
+                                                    ) ||
+                                                    voices[0];
+
+                                                utterance.voice = finalVoice;
+                                                utterance.lang =
+                                                    finalVoice?.lang || "en-US";
+
+                                                console.log(
+                                                    "Speaking with:",
+                                                    finalVoice?.name,
+                                                    finalVoice?.lang
+                                                );
+                                                window.speechSynthesis.speak(
+                                                    utterance
+                                                );
                                             }
-                                          }}
+
+                                            function loadVoicesAndSpeak() {
+                                                let voices =
+                                                    window.speechSynthesis.getVoices();
+                                                if (voices.length) {
+                                                    setVoiceAndSpeak(voices);
+                                                } else {
+                                                    // Android: voices not loaded immediately
+                                                    const handleVoicesChanged =
+                                                        () => {
+                                                            voices =
+                                                                window.speechSynthesis.getVoices();
+                                                            setVoiceAndSpeak(
+                                                                voices
+                                                            );
+                                                            window.speechSynthesis.onvoiceschanged =
+                                                                null; // Clean up
+                                                        };
+                                                    window.speechSynthesis.onvoiceschanged =
+                                                        handleVoicesChanged;
+                                                }
+                                            }
+
+                                            loadVoicesAndSpeak();
+                                        }}
                                         className="mt-2 flex items-center gap-1 text-blue-500 hover:text-blue-600"
                                         title="Speak response"
                                     >
