@@ -26,7 +26,7 @@ export async function embedQuranFile(filePath) {
         // 3. Initialize Google Embeddings
         const embedder = new GoogleGenerativeAIEmbeddings({
             modelName: "embedding-001",
-            apiKey: "AIzaSyAzDGuCQDrnZBlXw-PmdCl3Ojn3JquSxQo",
+            apiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY,
         });
 
         const vectors = await embedder.embedDocuments(
